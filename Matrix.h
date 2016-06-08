@@ -32,9 +32,9 @@ public:
 			++ind; return *this;
 		}
 
-		Iterator& operator+(size_t ind)
+		Iterator& operator+(size_t i)
 		{
-			ind += ind;
+			ind += i;
 			return *this;
 		}
 		T& operator*() const
@@ -55,15 +55,19 @@ public:
 	//	myelement& index(int n1, int m1);
 	Matrix(void);
 	Matrix(T **p, int n1, int m1);
-	void Print();
+	Matrix(const Matrix<T>& matrix);
+     Matrix<T>& operator=(const Matrix<T> & matrix);
+     void Print();
 	Matrix<T> operator* (Matrix<T> &mat1);
 	Matrix<T> operator| (Matrix<T> &mat1);
 	Matrix<T> operator! ();
-	Iterator begin()
+	
+     Iterator begin()
 	{
 		return Iterator(pm, n, m, 0);
 	}
-	Iterator end()
+	
+     Iterator end()
 	{
 		return Iterator(pm, n, m, n*m);
 	}
@@ -125,6 +129,35 @@ Matrix<T>::Matrix(T **p, int n1, int m1)
 
 }
 
+template<class T> 
+Matrix<T>::Matrix(const Matrix<T>& matrix) 
+{ 
+     pm = new T*[matrix.n]; 
+     for (int i = 0; i < matrix.n; i++) 
+          pm[i] = new T[matrix.m]; 
+     n = matrix.n; 
+     m = matrix.m; 
+     for (int i = 0; i < n; i++) 
+          for (int j = 0; j < m; j++) 
+               pm[i][j] = matrix.pm[i][j]; 
+}
+
+template<class T> 
+Matrix<T>& Matrix<T>::operator=(const Matrix<T> & matrix) 
+{ 
+     if (this == &matrix) 
+          return *this; 
+
+     pm = new T*[matrix.n]; 
+     for (int i = 0; i < matrix.n; i++) 
+          pm[i] = new T[matrix.m]; 
+     n = matrix.n; 
+     m = matrix.m; 
+     for (int i = 0; i < n; i++) 
+          for (int j = 0; j < m; j++) 
+               pm[i][j] = matrix.pm[i][j]; 
+     return *this; 
+}
 
 
 template<class T>
@@ -143,6 +176,7 @@ void Matrix<T>::Print()
 }
 
 
+
 template<class T>
 Matrix<T> Matrix<T>::operator* (Matrix<T> &mat1)// Сложение матриц
 {
@@ -155,8 +189,8 @@ Matrix<T> Matrix<T>::operator* (Matrix<T> &mat1)// Сложение матриц
 			pM[i][j] = pm[i][j] * mat1.pm[i][j];
 	}
 	Matrix<T> p(pM, n, m);
-	for (int i = 0; i<n; i++) delete[] pM[i];
-	delete[] pM;
+	//for (int i = 0; i<n; i++) delete[] pM[i];
+	//delete[] pM;
 	return p;
 }
 
@@ -194,13 +228,15 @@ Matrix<T> Matrix<T>::operator! ()// Поворот матриц
 			pM[i][j] = pm[n - 1 - j][i];
 	}
 	Matrix<T> p(pM, m, n);
-	for (int i = 0; i<m; i++) delete[] pM[i];
-	delete[] pM;
+	//for (int i = 0; i<m; i++) delete[] pM[i];
+	//delete[] pM;
 	return p;
 }
 
 template<class T>
 Matrix<T>::~Matrix(void)
 {
+for (int i = 0; i<n; i++) delete[] pm[i];
+delete[] pm;
 }
 
